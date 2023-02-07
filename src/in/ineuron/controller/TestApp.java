@@ -1,5 +1,8 @@
 package in.ineuron.controller;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Scanner;
 import in.ineuron.dto.Student;
 import in.ineuron.service.IStudentService;
@@ -7,82 +10,94 @@ import in.ineuron.servicefactory.StudentServiceFactory;
 
 public class TestApp {
 
-	public static void main(String[] args) {
-		System.out.println("Welcome to CRUD APP"+"\n"+"-----------------------");
-		option();
-	}
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		while (true) {
 
-	private static void option() {
-	
-		Scanner sc = new Scanner(System.in);
-		
-		
-		System.out.println("\n* Press 1 for Insert operation");
-		System.out.println("* Press 2 for Select operation");
-		System.out.println("* Press 3 for Update operation");
-		System.out.println("* Press 4 for Delete operation");
-		System.out.println("* Press 0 for Exit   operation");
-		System.out.print(">");
-		
-		int value = sc.nextInt();
+			System.out.println("1. CREATE");
+			System.out.println("2. READ");
+			System.out.println("3. UPDATE");
+			System.out.println("4. DELETE");
+			System.out.println("5. EXIT");
+			System.out.print("ENTER UR CHOICE, PRESS[1/2/3/4/5]::  ");
+			String option = br.readLine();
 
-		switch (value) {
-		case 0:
-			System.out.println("Turning Off.."); // exit
-			System.exit(0);
-			break;
-		case 1:
-			insertOperation();
-			break;
+			switch (option) {
+			case "1":
+				insertOperation();
+				break;
+			case "2":
+				selectOpertation();
+				break;
+			case "3":
+				updateOperation();
+				break;
+			case "4":
+				deleteOperation();
+				break;
+			case "5":
+				System.out.println("******* Thanks for using the application *****");
+				System.exit(0);
+			default:
+				System.out.println("Invalid option plz try again with valid options....");
+				break;
+			}
 
-		case 2:
-			selectOpertation();
-			break;
-
-		case 3:
-			updateOperation();
-			break;
-
-		case 4:
-			deleteOperation();
-			break;
-			
-		default:
-			System.out.println("Please Press the valid option!..");
-			option();
-			
 		}
-		
+
 	}
 
-	public static void updateOperation() {
+	public static void updateOperation() throws IOException {
 		IStudentService studentService = StudentServiceFactory.getStudentService();
-		Scanner sc = new Scanner(System.in);
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
 		System.out.print("Enter the student id::");
-		int id = sc.nextInt();
-		sc.nextLine();
-		Student student = studentService.searchStudent(id);
+		String id = br.readLine();
+		
+		Student student = studentService.searchStudent(Integer.parseInt(id));
 
 		if (student != null) {
-			System.out.println("Old Records::" + "\n"+"------------");
-			System.out.print("Name: " + student.getSname() + ", Enter the new Name: ");
-			String name = sc.nextLine();
-			System.out.print("Address: " + student.getSaddress() + ", Enter the new Address: ");
-			String address = sc.nextLine();
-			System.out.print("Age: " + student.getSage() + ", Enter the new Age: ");
-			int age = sc.nextInt();
-//			sc.nextLine();
-			String msg = studentService.updateStudent(id, name, age, address);
+			Student newStudent = new Student();
 
-			if (msg.equalsIgnoreCase("success"))
-				System.out.println("Record Updated sucessfully..");
-			else
-				System.out.println("Updation failed..");
+			System.out.println("Student id is :: " + student.getSid());
+			newStudent.setSid(student.getSid());
 
-		} else
-			System.out.println("Record Not Available..");
-		sc.close();
+			System.out.print("Student oldName is :: " + student.getSname() + "  Enter newName :: ");
+			String newName = br.readLine();
+			if (newName.equals("") || newName == "") {
+				newStudent.setSname(student.getSname());
+			} else {
+				newStudent.setSname(newName);
+			}
+			System.out.print("Student oldAge is :: " + student.getSage() + "  Enter newAge :: ");
+			String newAge = br.readLine();
+			if (newAge.equals("") || newAge == "") {
+				newStudent.setSage(student.getSage());
+			} else {
+				newStudent.setSage(Integer.parseInt(newAge));
+			}
+			System.out.print("Student oldAddress is :: " + student.getSaddress() + "  Enter newAddress :: ");
+			String newAddress = br.readLine();
+			if (newAddress.equals("") || newAddress == "") {
+				newStudent.setSaddress(student.getSaddress());
+			} else {
+				newStudent.setSaddress(newAddress);
+			}
+
+			System.out.println("new Object data is :: " + newStudent);
+			System.out.println();
+
+			String status = studentService.updateStudent(newStudent);
+			if (status.equalsIgnoreCase("success")) {
+				System.out.println("record updated succesfully");
+			} else {
+				System.out.println("record updation failed");
+			}
+
+		} else {
+			System.out.println("Student record not available for the given id  " + id + " for updation...");
+		}
+
 	}
 
 	public static void deleteOperation() {
@@ -100,7 +115,7 @@ public class TestApp {
 			System.out.println("Record Not Available..");
 		else
 			System.out.println("Deletion failed..");
-		sc.close();
+		
 	}
 
 	public static void selectOpertation() {

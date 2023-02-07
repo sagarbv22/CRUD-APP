@@ -26,7 +26,7 @@ public class StudentDaoImpl implements IStudentDao {
 			e1.printStackTrace();
 		}
 		int rowsAffected = 0;
-		String insert = "Insert into Student(sname, sage,saddress)values(?,?,?)";
+		String insert = "Insert into Student(sname,sage,saddress)values(?,?,?)";
 		try {
 
 			if (connection != null)
@@ -90,7 +90,7 @@ public class StudentDaoImpl implements IStudentDao {
 	}
 
 	@Override
-	public String updateStudent(Integer sid, String sname, Integer sage, String saddress) {
+	public String updateStudent(Student student) {
 		try {
 			connection = JdbcUtil.getConnection();
 			String updateQuery = "Update student set sname=?, sage=?, saddress=? where sid = ?";
@@ -99,10 +99,10 @@ public class StudentDaoImpl implements IStudentDao {
 				pstmt = connection.prepareStatement(updateQuery);
 
 			if (pstmt != null)
-				pstmt.setString(1, sname);
-			pstmt.setInt(2, sage);
-			pstmt.setString(3, saddress);
-			pstmt.setInt(4, sid);
+				pstmt.setString(1, student.getSname());
+			pstmt.setInt(2, student.getSage());
+			pstmt.setString(3, student.getSaddress());
+			pstmt.setInt(4, student.getSid());
 
 			if (pstmt != null)
 				row = pstmt.executeUpdate();

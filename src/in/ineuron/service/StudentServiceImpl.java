@@ -22,9 +22,9 @@ public class StudentServiceImpl implements IStudentService {
 	}
 
 	@Override
-	public String updateStudent(Integer sid, String sname, Integer sage, String saddress) {
+	public String updateStudent(Student student) {
 		studentDao = StudentDaoFactory.getStudentDao();
-		return studentDao.updateStudent(sid, sname, sage, saddress);
+		return studentDao.updateStudent(student);
 	}
 
 	@Override

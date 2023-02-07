@@ -4,6 +4,9 @@ import java.io.*;
 import java.sql.*;
 import java.util.*;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
 public class JdbcUtil {
 
 	private JdbcUtil() {
@@ -20,15 +23,9 @@ public class JdbcUtil {
 
 	public static Connection getConnection() throws SQLException, IOException {
 
-		// Take the data from properties file
-		FileInputStream fis = new FileInputStream("src\\in\\ineuron\\application\\Application.properties");
-		Properties properties = new Properties();
-		properties.load(fis);
-
-		// Step2. Establish the Connection
-		Connection connection = DriverManager.getConnection(properties.getProperty("url"),
-				properties.getProperty("userId"), properties.getProperty("passWord"));
-		return connection;
+		HikariConfig config = new HikariConfig("src\\in\\ineuron\\application\\Application.properties");
+		HikariDataSource dataSource = new HikariDataSource(config);
+		return dataSource.getConnection();
 	}
 
 	public static void cleanUp(Connection con, Statement statement, ResultSet resultSet) throws SQLException {
